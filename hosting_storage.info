@@ -1,0 +1,5 @@
+name = Storage service support
+description = Allows Aegir to store the Drupal files directory in a shared filesystem
+package = Hosting
+core = 7.x
+dependencies[] = hosting

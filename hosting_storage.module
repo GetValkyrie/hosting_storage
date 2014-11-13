@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @file
+ * Store the Drupal files directory in a shared filesystem.
+ */
+
+/**
+ * Implementation of hook_hosting_service_type().
+ */
+function hosting_storage_hosting_service_type() {
+  return array(
+    'storage' => array(
+      'title' => t('Storage'),
+    )
+  );
+}
+
+/**
+ * Implementation of hook_hosting_service().
+ */
+function hosting_storage_hosting_service() {
+  return array(
+    'basic' => 'storage',
+  );
+}
+
