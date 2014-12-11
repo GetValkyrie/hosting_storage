@@ -6,6 +6,19 @@
 class Provision_Service_storage_basic extends Provision_Service_storage {
 
   /**
+   * Initialize this class, including option handling.
+   */
+  function init_server() {
+    // REMEMBER TO CALL THE PARENT!
+    parent::init_server();
+    $this->server->setProperty('storage_location');
+    $this->server->setProperty('preinstall_script');
+    $this->server->setProperty('postinstall_script');
+    $this->server->setProperty('predelete_script');
+    $this->server->setProperty('postdelete_script');
+  }
+
+  /**
    * Implementation of service verify.
    */
   public function verify_server_cmd() {

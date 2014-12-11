@@ -4,17 +4,12 @@
 class Provision_Service_storage extends Provision_Service {
   public $service = 'storage';
 
-  function __call($name, $arguments) {
-    return;
-  }
-
+/*
   function subscribe_server($context) {
-    $context->setProperty('storage_location');
-    $context->setProperty('preinstall_script');
-    $context->setProperty('postinstall_script');
-    $context->setProperty('predelete_script');
-    $context->setProperty('postdelete_script');
+    // we used to setProperty here but it was the wrong place, it's init_server()
+    // *but* maybe this is necessary for the module to be enabled in the backend...?
   }
+*/
 
   /**
    * Wrapper around hook_provision_drupal_create_directories_alter().
