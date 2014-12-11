@@ -190,15 +190,15 @@ class hostingService_storage extends hostingService {
 }
 
 /**
- * Class hostingService_storage_basic
+ * Class hostingService_storage_files
  *
- * Provide the basic storage engine, which moves all Drupal files directories into a single location.
+ * Provide the files storage engine, which moves all Drupal files directories into a single location.
  */
-class hostingService_storage_basic extends hostingService_storage {
-  public $type = 'basic';
+class hostingService_storage_files extends hostingService_storage {
+  public $type = 'files';
 
   /**
-   * Hide the script fields, as the basic storage backend doesn't require them.
+   * Hide the script fields, as the files storage backend doesn't require them.
    */
   public function form(&$form) {
     parent::form($form);

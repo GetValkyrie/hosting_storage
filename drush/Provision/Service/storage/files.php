@@ -3,7 +3,7 @@
 /**
  * Implementation of the basic storage service.
  */
-class Provision_Service_storage_basic extends Provision_Service_storage {
+class Provision_Service_storage_files extends Provision_Service_storage {
 
   /**
    * Initialize this class, including option handling.
@@ -55,6 +55,10 @@ class Provision_Service_storage_basic extends Provision_Service_storage {
     unset($dirs["sites/$url/files/ctools"]);
     unset($dirs["sites/$url/files/imagecache"]);
     unset($dirs["sites/$url/files/locations"]);
+    unset($dirs["sites/$url/files/styles"]);
+    unset($dirs["sites/$url/private/config"]);
+    unset($dirs["sites/$url/private/config/active"]);
+    unset($dirs["sites/$url/private/config/staging"]);
     unset($dirs["sites/$url/private/files"]);
     unset($dirs["sites/$url/private/temp"]);
     $dirs["$site_storage/private"] = 02770;
@@ -67,6 +71,10 @@ class Provision_Service_storage_basic extends Provision_Service_storage {
     $dirs["$site_storage/files/ctools"] = 02770;
     $dirs["$site_storage/files/imagecache"] = 02770;
     $dirs["$site_storage/files/locations"] = 02770;
+    $dirs["$site_storage/files/styles"] = 02770;
+    $dirs["$site_storage/private/config"] = 02770;
+    $dirs["$site_storage/private/config/active"] = 02770;
+    $dirs["$site_storage/private/config/staging"] = 02770;
     $dirs["$site_storage/private/files"] = 02770;
     $dirs["$site_storage/private/temp"] = 02770;
 
@@ -97,6 +105,10 @@ class Provision_Service_storage_basic extends Provision_Service_storage {
     unset($chgrp["sites/$url/files/ctools"]);
     unset($chgrp["sites/$url/files/imagecache"]);
     unset($chgrp["sites/$url/files/locations"]);
+    unset($chgrp["sites/$url/files/styles"]);
+    unset($chgrp["sites/$url/private/config"]);
+    unset($chgrp["sites/$url/private/config/active"]);
+    unset($chgrp["sites/$url/private/config/staging"]);
     unset($chgrp["sites/$url/private/files"]);
     unset($chgrp["sites/$url/private/temp"]);
 
@@ -112,6 +124,10 @@ class Provision_Service_storage_basic extends Provision_Service_storage {
     $chgrp["$site_storage/files/ctools"] = d('@server_master')->web_group;;
     $chgrp["$site_storage/files/imagecache"] = d('@server_master')->web_group;;
     $chgrp["$site_storage/files/locations"] = d('@server_master')->web_group;;
+    $chgrp["$site_storage/files/styles"] = d('@server_master')->web_group;;
+    $chgrp["$site_storage/private/config"] = d('@server_master')->web_group;;
+    $chgrp["$site_storage/private/config/active"] = d('@server_master')->web_group;;
+    $chgrp["$site_storage/private/config/staging"] = d('@server_master')->web_group;;
     $chgrp["$site_storage/private/files"] = d('@server_master')->web_group;;
     $chgrp["$site_storage/private/temp"] = d('@server_master')->web_group;;
   }

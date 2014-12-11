@@ -21,7 +21,7 @@ function hosting_storage_hosting_service_type() {
  */
 function hosting_storage_hosting_service() {
   return array(
-    'basic' => 'storage',
+    'files' => 'storage',
   );
 }
 
