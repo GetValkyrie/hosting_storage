@@ -22,6 +22,7 @@ function hosting_storage_hosting_service_type() {
 function hosting_storage_hosting_service() {
   return array(
     'files' => 'storage',
+    'site' => 'storage',
   );
 }
 
