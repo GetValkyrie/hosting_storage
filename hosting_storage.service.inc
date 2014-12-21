@@ -211,3 +211,28 @@ class hostingService_storage_files extends hostingService_storage {
   }
 }
 
+/**
+ * Class hostingService_storage_site
+ *
+ * Provide the site storage engine, which moves Drupal sites out of platforms and into another fixed directory.
+ */
+class hostingService_storage_site extends hostingService_storage {
+  public $type = 'site';
+
+  /**
+   * Hide the script fields, as the site storage backend doesn't require them.
+   */
+  public function form(&$form) {
+    parent::form($form);
+
+    $form['preinstall_script']['#access'] = FALSE;
+    $form['postinstall_script']['#access'] = FALSE;
+    $form['predelete_script']['#access'] = FALSE;
+    $form['postdelete_script']['#access'] = FALSE;
+    $form['storage_location']['#default_value'] = isset($this->storage_location) ? $this->storage_location : '/var/aegir/sites';
+    $form['storage_location']['#title'] = t('Site storage location');
+    $form['storage_location']['#description'] = t('The base directory within which all site directories will be stored.');
+  }
+
+}
+
