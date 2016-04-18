@@ -25,7 +25,7 @@ class Provision_Service_storage_files extends Provision_Service_storage {
     // Ensure the storage directory exists.
     provision_file()->create_dir($this->server->storage_location, dt("Storage location"), 0755);
     $this->sync($this->server->storage_location, array(
-      'exclude' => $this->server->storage_location . '/*',  // Make sure remote directory is created
+        'exclude' => $this->server->storage_location . '/*',  // Make sure remote directory is created
     ));
   }
 
@@ -36,15 +36,8 @@ class Provision_Service_storage_files extends Provision_Service_storage {
     // Instead of creating the files directories in the platform/sites/sitename.com
     // directory, create the directories in the filestorage directory, and symlink
     // them into place.
-
-    // First, make sure sites/$url is ready to go.
-    parent::create_directories_alter($dirs, $url);
-
-    // Next, create the file storage area for the site within the filestorage dir.
+    $path = 'sites/' . $url;
     $site_storage = $this->server->storage_location . '/' . $url;
-    provision_file()->create_dir($site_storage, 'Site files directory', 0755);
-
-    // Then, create the machine writable folders in this new directory instead.
     unset($dirs["sites/$url/private"]);
     unset($dirs["sites/$url/files"]);
     unset($dirs["sites/$url/files/tmp"]);
@@ -58,36 +51,58 @@ class Provision_Service_storage_files extends Provision_Service_storage {
     unset($dirs["sites/$url/files/styles"]);
     unset($dirs["sites/$url/private/config"]);
     unset($dirs["sites/$url/private/config/active"]);
-    unset($dirs["sites/$url/private/config/staging"]);
+    unset($dirs["sites/$url/private/config/sync"]);
     unset($dirs["sites/$url/private/files"]);
     unset($dirs["sites/$url/private/temp"]);
-    $dirs["$site_storage/private"] = 02770;
-    $dirs["$site_storage/files"] = 02770;
-    $dirs["$site_storage/files/tmp"] = 02770;
-    $dirs["$site_storage/files/images"] = 02770;
-    $dirs["$site_storage/files/pictures"] = 02770;
-    $dirs["$site_storage/files/css"] = 02770;
-    $dirs["$site_storage/files/js"] = 02770;
-    $dirs["$site_storage/files/ctools"] = 02770;
-    $dirs["$site_storage/files/imagecache"] = 02770;
-    $dirs["$site_storage/files/locations"] = 02770;
-    $dirs["$site_storage/files/styles"] = 02770;
-    $dirs["$site_storage/private/config"] = 02770;
-    $dirs["$site_storage/private/config/active"] = 02770;
-    $dirs["$site_storage/private/config/staging"] = 02770;
-    $dirs["$site_storage/private/files"] = 02770;
-    $dirs["$site_storage/private/temp"] = 02770;
+
+    if (!is_dir($path.'/files')) {
+      // First, make sure sites/$url is ready to go.
+      parent::create_directories_alter($dirs, $url);
+      // Next, create the file storage area for the site within the filestorage dir.
+
+      provision_file()->create_dir($site_storage, 'Site files directory', 0755);
+
+      // Then, create the machine writable folders in this new directory instead.
+      $dirs["$site_storage/private"] = 02770;
+      $dirs["$site_storage/files"] = 02770;
+      $dirs["$site_storage/files/tmp"] = 02770;
+      $dirs["$site_storage/files/images"] = 02770;
+      $dirs["$site_storage/files/pictures"] = 02770;
+      $dirs["$site_storage/files/css"] = 02770;
+      $dirs["$site_storage/files/js"] = 02770;
+      $dirs["$site_storage/files/ctools"] = 02770;
+      $dirs["$site_storage/files/imagecache"] = 02770;
+      $dirs["$site_storage/files/locations"] = 02770;
+      $dirs["$site_storage/files/styles"] = 02770;
+      $dirs["$site_storage/private/config"] = 02770;
+      $dirs["$site_storage/private/config/active"] = 02770;
+      $dirs["$site_storage/private/config/sync"] = 02770;
+      $dirs["$site_storage/private/files"] = 02770;
+      $dirs["$site_storage/private/temp"] = 02770;
+    }
+
+    else {
+      if (!is_dir($site_storage)) {
+        provision_file()->create_dir($site_storage, 'Site files directory', 0755);
+        exec("mv " . escapeshellarg($path . '/files') . " " . escapeshellarg($site_storage . '/files'));
+        exec("mv " . escapeshellarg($path . '/private') . " " . escapeshellarg($site_storage . '/private'));
+      }
+      else {
+        _provision_recursive_delete($path . '/files');
+        _provision_recursive_delete($path . '/private');
+      }
+    }
 
     // Finally, symlink everything into place (remove the link first, in case it aleady exists for some reason).
     provision_file()->unlink("sites/$url/files");
     provision_file()->symlink($site_storage . '/files', "sites/$url/files")
-      ->succeed('Symlinked files directory into place.')
-      ->fail('Could not symlink files directory into place.', 'DRUSH_PERM_ERROR');
+        ->succeed('Symlinked files directory into place.')
+        ->fail('Could not symlink files directory into place.', 'DRUSH_PERM_ERROR');
 
     provision_file()->unlink("sites/$url/private");
     provision_file()->symlink($site_storage . '/private', "sites/$url/private")
-      ->succeed('Symlinked private files directory into place.')
-      ->fail('Could not symlink private files directory into place.', 'DRUSH_PERM_ERROR');
+        ->succeed('Symlinked private files directory into place.')
+        ->fail('Could not symlink private files directory into place.', 'DRUSH_PERM_ERROR');
   }
 
   /**
@@ -108,7 +123,7 @@ class Provision_Service_storage_files extends Provision_Service_storage {
     unset($chgrp["sites/$url/files/styles"]);
     unset($chgrp["sites/$url/private/config"]);
     unset($chgrp["sites/$url/private/config/active"]);
-    unset($chgrp["sites/$url/private/config/staging"]);
+    unset($chgrp["sites/$url/private/config/sync"]);
     unset($chgrp["sites/$url/private/files"]);
     unset($chgrp["sites/$url/private/temp"]);
 
@@ -127,7 +142,7 @@ class Provision_Service_storage_files extends Provision_Service_storage {
     $chgrp["$site_storage/files/styles"] = d('@server_master')->web_group;;
     $chgrp["$site_storage/private/config"] = d('@server_master')->web_group;;
     $chgrp["$site_storage/private/config/active"] = d('@server_master')->web_group;;
-    $chgrp["$site_storage/private/config/staging"] = d('@server_master')->web_group;;
+    $chgrp["$site_storage/private/config/sync"] = d('@server_master')->web_group;;
     $chgrp["$site_storage/private/files"] = d('@server_master')->web_group;;
     $chgrp["$site_storage/private/temp"] = d('@server_master')->web_group;;
   }
@@ -151,6 +166,10 @@ class Provision_Service_storage_files extends Provision_Service_storage {
     // site's URI, so we can use it to clean up the old filestorage directory.
     // Fortunately, this code is already written, so we'll just call the function.
     drush_log(dt('Cleaning up the source site file storage.'), 'notice');
-    $this->post_delete();
+    $olddomain = d()->uri;
+    $newdomain = ltrim(drush_get_option('target_name',''), '@');
+    if ($olddomain !== $newdomain) {
+      $this->post_delete();
+    }
   }
 }
